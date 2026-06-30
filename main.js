@@ -12,6 +12,36 @@
 
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
+  /* ---------------- Nav: scroll state + mobile menu ---------------- */
+  function initNav() {
+    var nav = document.querySelector(".nav");
+    var toggle = document.querySelector(".nav-toggle");
+    var menu = document.getElementById("nav-menu");
+    if (!nav) return;
+
+    function onScroll() {
+      nav.classList.toggle("is-scrolled", window.scrollY > 48);
+    }
+    onScroll();
+    addEventListener("scroll", onScroll, { passive: true });
+
+    if (toggle && menu) {
+      toggle.addEventListener("click", function () {
+        var open = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", open ? "false" : "true");
+        menu.classList.toggle("is-open", !open);
+        document.body.style.overflow = open ? "" : "hidden";
+      });
+      menu.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          toggle.setAttribute("aria-expanded", "false");
+          menu.classList.remove("is-open");
+          document.body.style.overflow = "";
+        });
+      });
+    }
+  }
+
   /* ---------------- Smooth scroll ---------------- */
   var lenis = null;
   if (!reduce && typeof Lenis !== "undefined" && hasGSAP) {
@@ -237,11 +267,13 @@
     var navEls = gsap.utils.toArray(".nav-brand, .nav-links a");
     var social = gsap.utils.toArray(".social li");
     var cue = document.querySelector(".scroll-cue");
+    var actions = document.querySelector(".hero-actions");
 
     if (eyebrow) gsap.set(eyebrow, { opacity: 0, y: 10 });
     gsap.set(wm, { opacity: 0, scale: 0.92, filter: "blur(20px)" });
     gsap.set(sub, { opacity: 0 });
     if (rule) gsap.set(rule, { width: 0 });
+    if (actions) gsap.set(actions, { opacity: 0, y: 16 });
     gsap.set(navEls, { opacity: 0, y: -16 });
     gsap.set(social, { opacity: 0, x: -14 });
     gsap.set(cue, { opacity: 0, y: 12 });
@@ -252,6 +284,7 @@
     tl.to(wm, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.8, ease: "power3.out" }, 0.25)
       .to(rule, { width: 54, duration: 1.0 }, 1.0)
       .to(sub, { opacity: 1, duration: 1.0 }, 1.05)
+      .to(actions, { opacity: 1, y: 0, duration: 0.85 }, 1.2)
       .to(navEls, { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 0.55)
       .to(social, { opacity: 1, x: 0, duration: 0.7, stagger: 0.08 }, 1.15)
       .to(cue, { opacity: 1, y: 0, duration: 0.8 }, 1.35);
@@ -263,7 +296,8 @@
   function buildIntro() {
     var q = function (s) { return document.querySelector(s); };
     var wordmark = q(".wordmark-wrap"), haze = q(".haze"),
-        beam = q(".intro-beam"), glow = q(".intro-glow"), cue = q(".scroll-cue");
+        beam = q(".intro-beam"), glow = q(".intro-glow"), cue = q(".scroll-cue"),
+        actions = q(".hero-actions");
 
     var tl = gsap.timeline({
       scrollTrigger: {
@@ -280,6 +314,7 @@
     if (beam) tl.to(beam, { opacity: 0, duration: 0.85 }, 0);
     if (glow) tl.to(glow, { opacity: 0.4, duration: 0.85 }, 0);
     if (cue) tl.to(cue, { opacity: 0, y: 20, duration: 0.5, ease: "power2.in" }, 0);
+    if (actions) tl.to(actions, { opacity: 0, y: 12, duration: 0.45, ease: "power2.in" }, 0);
   }
 
   /* ===========================================================
@@ -295,7 +330,22 @@
       });
     }
 
+    var flowers = document.querySelector(".color-world__flowers");
+    if (flowers && !reduce) {
+      gsap.to(flowers, {
+        y: -80, ease: "none",
+        scrollTrigger: { trigger: ".color-world", start: "top bottom", end: "bottom top", scrub: 1.2 }
+      });
+    }
+
     if (reduce) return;
+
+    gsap.utils.toArray(".step, .impact-stat").forEach(function (el, i) {
+      gsap.from(el, {
+        opacity: 0, y: 40, duration: 0.95, ease: "power3.out", delay: i * 0.04,
+        scrollTrigger: { trigger: el, start: "top 88%" }
+      });
+    });
 
     gsap.utils.toArray(".reveal").forEach(function (el) {
       gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
@@ -322,6 +372,7 @@
 
   /* ---------------- boot ---------------- */
   function boot() {
+    initNav();
     initSmoke();
     initButterflies();
     if (!reduce) buildIntro();

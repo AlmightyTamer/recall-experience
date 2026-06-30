@@ -10,6 +10,32 @@
   var hasTHREE = typeof THREE !== "undefined";
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
+  function initNav() {
+    var nav = document.querySelector(".nav");
+    var toggle = document.querySelector(".nav-toggle");
+    var menu = document.getElementById("nav-menu");
+    if (!nav) return;
+    function onScroll() { nav.classList.toggle("is-scrolled", window.scrollY > 48); }
+    onScroll();
+    addEventListener("scroll", onScroll, { passive: true });
+    if (toggle && menu) {
+      toggle.addEventListener("click", function () {
+        var open = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", open ? "false" : "true");
+        menu.classList.toggle("is-open", !open);
+        document.body.style.overflow = open ? "" : "hidden";
+      });
+      menu.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          toggle.setAttribute("aria-expanded", "false");
+          menu.classList.remove("is-open");
+          document.body.style.overflow = "";
+        });
+      });
+    }
+  }
+  initNav();
+
   if (!reduce && typeof Lenis !== "undefined" && hasGSAP) {
     var lenis = new Lenis({ lerp: 0.08, wheelMultiplier: 0.9, smoothWheel: true });
     lenis.on("scroll", ScrollTrigger.update);

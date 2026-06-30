@@ -26,7 +26,10 @@
   <!-- Top nav -->
   <header class="nav" data-intro="nav">
     <a class="nav-brand" href="index.html" aria-label="Recall home">Recall</a>
-    <nav class="nav-links" aria-label="Primary">
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+      <span></span><span></span>
+    </button>
+    <nav class="nav-links" id="nav-menu" aria-label="Primary">
       <a href="index.html" class="is-active">Home</a>
       <a href="problem.html">Problem</a>
       <a href="product.html">Product</a>
@@ -49,13 +52,18 @@
         <div class="intro-bg" aria-hidden="true">
           <div class="intro-glow"></div>
           <div class="intro-beam"></div>
+          <div class="intro-grain"></div>
           <div class="intro-vignette"></div>
         </div>
 
         <div class="wordmark-wrap" data-layer="wordmark">
           <p class="wordmark-eyebrow" data-intro="eyebrow">Cognitive care companion</p>
-          <h1 class="wordmark" data-intro="wordmark">Recall</h1>
+          <h1 class="wordmark" data-intro="wordmark"><span class="wordmark-fill">Recall</span></h1>
           <p class="wordmark-sub" data-intro="sub"><span class="rule"></span>When the world goes quiet, a name remains.</p>
+          <div class="hero-actions reveal-static" data-intro="actions">
+            <a class="btn btn--primary btn--sm" href="https://almightytamer.github.io/recall/" target="_blank" rel="noopener">Try the live app</a>
+            <a class="btn btn--ghost btn--sm" href="#demo">Watch the demo</a>
+          </div>
         </div>
 
         <div class="haze" aria-hidden="true"></div>
@@ -72,6 +80,7 @@
 
     <!-- ======================= ACT II — THE COLOR ======================= -->
     <div class="color-world" id="story">
+      <div class="color-world__flowers" aria-hidden="true"></div>
 
       <!-- Unveil -->
       <section class="unveil" aria-label="Recall, revealed">
@@ -84,13 +93,79 @@
             A companion that holds the thread of a life — so the people we love
             can stay themselves, even when memory lets go.
           </p>
+
+          <div class="demo-video reveal" id="demo">
+            <div class="demo-video__frame">
+              <iframe
+                src="https://www.youtube.com/embed/Xh_k-GUBmmA"
+                title="Recall app demo video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+            <p class="demo-video__cap">Watch the demo — see Recall in action.</p>
+          </div>
         </div>
+      </section>
+
+      <!-- Impact stats -->
+      <section class="impact" aria-label="Why Recall matters">
+        <div class="impact-inner">
+          <article class="impact-stat">
+            <span class="impact-num" data-count="55">55M+</span>
+            <p class="impact-label">People worldwide live with dementia — most cared for at home.</p>
+          </article>
+          <article class="impact-stat">
+            <span class="impact-num">16M</span>
+            <p class="impact-label">Unpaid caregivers in the U.S. carry the weight every day.</p>
+          </article>
+          <article class="impact-stat">
+            <span class="impact-num">100%</span>
+            <p class="impact-label">On-device. Her memories never leave her phone.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Story -->
+      <section class="story-quote" aria-label="Margaret's story">
+        <blockquote class="story-quote__inner reveal">
+          <p>"Some mornings I forget my own name. Then Recall reads the day back to me — and I remember who I am again."</p>
+          <footer><cite>Margaret</cite><span>81 · living at home with her daughter nearby</span></footer>
+        </blockquote>
+      </section>
+
+      <!-- How it works -->
+      <section class="steps" id="how" aria-label="How Recall works">
+        <div class="steps-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2 class="steps-title">Three quiet acts of care.</h2>
+        </div>
+        <ol class="steps-list">
+          <li class="step">
+            <span class="step-num">01</span>
+            <h3>It remembers the day.</h3>
+            <p>Warm, true sentences about right now — where she is, who's coming, what's already done.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">02</span>
+            <h3>It listens when she's lost.</h3>
+            <p>Clara answers in a calm voice, reading back the thread so panic never has to bloom.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">03</span>
+            <h3>It stays on her device.</h3>
+            <p>Every memory lives in her hand. Private by design — dignity isn't a setting.</p>
+          </li>
+        </ol>
       </section>
 
       <!-- ======================= ACT III — WHAT IT DOES ======================= -->
       <section class="features" id="features" aria-label="What Recall does">
 
         <article class="feature" data-accent="#39a0ff">
+          <span class="feature-num" aria-hidden="true">01</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-sun"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">State reconstruction</p>
@@ -100,6 +175,7 @@
         </article>
 
         <article class="feature" data-accent="#ff6aa2">
+          <span class="feature-num" aria-hidden="true">02</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-mic"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Clara, the voice companion</p>
@@ -109,6 +185,7 @@
         </article>
 
         <article class="feature" data-accent="#3fd9a0">
+          <span class="feature-num" aria-hidden="true">03</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-pill"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Vision-verified medication</p>
@@ -118,6 +195,7 @@
         </article>
 
         <article class="feature" data-accent="#ffc64b">
+          <span class="feature-num" aria-hidden="true">04</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-heart"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">ACSE score &amp; Comfort Mode</p>
@@ -127,6 +205,7 @@
         </article>
 
         <article class="feature" data-accent="#ff7a5c">
+          <span class="feature-num" aria-hidden="true">05</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-pulse"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Apple Health vitals</p>
@@ -136,6 +215,7 @@
         </article>
 
         <article class="feature" data-accent="#a98bff">
+          <span class="feature-num" aria-hidden="true">06</span>
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-lock"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">All on the device</p>
@@ -152,6 +232,7 @@
           <h2 class="cta-title reveal">Help them remember<br />who they are.</h2>
           <div class="cta-actions reveal">
             <a class="btn btn--primary" href="https://almightytamer.github.io/recall/" target="_blank" rel="noopener">Open the live app</a>
+            <a class="btn btn--ghost" href="#demo">Watch the demo</a>
             <a class="btn btn--ghost" href="contact.html">Contact us</a>
           </div>
           <p class="cta-foot reveal">
@@ -162,6 +243,31 @@
       </footer>
     </div>
   </main>
+
+  <footer class="site-footer" aria-label="Site footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Recall</div>
+        <p>A cognitive-care companion for people living with dementia — and the families who hold them close.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="problem.html">The problem</a>
+        <a href="product.html">Product</a>
+        <a href="team.html">Team</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://almightytamer.github.io/recall/" target="_blank" rel="noopener">Live app</a>
+        <a href="mailto:paramtyagi101@gmail.com">paramtyagi101@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Recall · Param Tyagi &amp; Advaith Vijayasankaran</span>
+      <span>Grey fades. Color returns.</span>
+    </div>
+  </footer>
 
   <!-- Libraries (free CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

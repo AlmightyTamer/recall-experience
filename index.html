@@ -45,14 +45,16 @@
     <!-- ======================= ACT I — THE GREY ======================= -->
     <section class="intro" aria-label="Introduction">
       <div class="intro-stage">
-        <!-- White ink smoke -->
-        <canvas id="smoke" class="smoke-canvas" aria-hidden="true"></canvas>
-
-        <!-- The wordmark -->
+        <!-- The wordmark (solid white, left-aligned) -->
         <div class="wordmark-wrap" data-layer="wordmark">
           <h1 class="wordmark" data-intro="wordmark">Recall</h1>
           <p class="wordmark-sub" data-intro="sub"><span class="rule"></span>When the world goes quiet, a name remains.</p>
         </div>
+
+        <!-- Half-blend: white smoke mass on the right -->
+        <div class="haze" aria-hidden="true"></div>
+        <!-- White ink smoke (tendrils) -->
+        <canvas id="smoke" class="smoke-canvas" aria-hidden="true"></canvas>
 
         <!-- The grandmother -->
         <div class="portrait-wrap" data-layer="portrait">

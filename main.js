@@ -70,7 +70,8 @@
         var op = (isReal ? 0.5 : 0.32) + Math.random() * 0.25;
         var mat = smokeMat(tex, op);
         var m = new THREE.Mesh(geo, mat);
-        m.position.set((Math.random() - 0.5) * 26, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 8);
+        // bias the smoke to the right so the left stays black (half-blend)
+        m.position.set(Math.random() * 22 - 4, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 8);
         m.rotation.z = Math.random() * 6.28;
         m.userData = {
           seed: Math.random() * 6.28,
@@ -258,40 +259,41 @@
   function buildIntro() {
     var q = function (s) { return document.querySelector(s); };
     var wordmark = q(".wordmark-wrap"), portraitWrap = q(".portrait-wrap"),
-        portrait = q(".portrait"), iris = q(".iris"), line = q(".portrait-line"), flash = q(".flash");
+        portrait = q(".portrait"), iris = q(".iris"), line = q(".portrait-line"),
+        flash = q(".flash"), haze = q(".haze");
 
-    gsap.set(portrait, { transformOrigin: "62% 42%" });
-    gsap.set(iris, { transformOrigin: "62% 42%", filter: "grayscale(1) brightness(.9) blur(10px)" });
+    gsap.set(iris, { filter: "grayscale(1) brightness(.92) blur(9px)" });
 
     var tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".intro", start: "top top", end: "bottom bottom", scrub: 0.7,
-        onUpdate: function (self) { if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 3.0); }
+        onUpdate: function (self) { if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 4.0); }
       }
     });
+    // total ~7.3s of timeline; scrub maps scroll 0..1 onto it
+    // [0.00-0.18] wordmark   [0.20-0.42] full Margaret, held   [0.42-0.75] dive   [0.75-1.0] portal
 
-    // wordmark drifts away
-    tl.to(wordmark, { scale: 1.16, filter: "blur(3px)", opacity: 0, duration: 1.1, ease: "power2.in" }, 0.06);
+    // wordmark + white mass drift away
+    tl.to(wordmark, { scale: 1.14, filter: "blur(3px)", opacity: 0, duration: 1.0, ease: "power2.in" }, 0.1);
+    if (haze) tl.to(haze, { opacity: 0, duration: 1.0, ease: "power1.in" }, 0.1);
 
-    // grandmother arrives
-    tl.fromTo(portraitWrap, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 0.16);
-    tl.fromTo(line, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.7 }, 0.42);
-    tl.to(line, { opacity: 0, y: -18, duration: 0.6 }, 0.84);
+    // ---- Margaret, shown FULLY, then held clearly ----
+    tl.fromTo(portraitWrap, { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 0.5);
+    tl.fromTo(line, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 1.7);
+    tl.to(line, { opacity: 0, y: -18, duration: 0.6, ease: "power2.in" }, 2.8);
+    // (full portrait visibly held here, ~progress 0.22 → 0.42)
 
-    // ---- the smooth dive into the eye ----
-    // long eased zoom on the portrait
-    tl.to(portrait, { scale: 9, ease: "power2.inOut", duration: 2.9 }, 0.55);
-    // soften the portrait as we reach the eye (hides the hand-off)
-    tl.to(portrait, { filter: "grayscale(1) brightness(.84) blur(7px)", duration: 1.1, ease: "power1.in" }, 1.7);
-    // iris rises through, sharpening as it takes focus (big overlap = seamless)
-    tl.to(iris, { opacity: 1, duration: 1.3, ease: "power2.inOut" }, 1.55);
-    tl.fromTo(iris, { scale: 1.3 }, { scale: 4.2, ease: "power2.inOut", duration: 2.6 }, 1.55);
-    tl.to(iris, { filter: "grayscale(1) brightness(.95) blur(0px)", duration: 1.2, ease: "power2.out" }, 2.0);
-    tl.to(portrait, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, 2.0);
+    // ---- the smooth dive into her eye (scale the whole frame about 68%/42%) ----
+    tl.to(portraitWrap, { scale: 13, ease: "power2.inOut", duration: 2.6 }, 3.2);
+    tl.to(portrait, { filter: "grayscale(1) brightness(.86) blur(7px)", duration: 1.0, ease: "power1.in" }, 4.3);
+    // iris rises through and sharpens as it takes focus (big overlap = seamless)
+    tl.to(iris, { opacity: 1, duration: 1.2, ease: "power2.inOut" }, 4.1);
+    tl.to(iris, { filter: "grayscale(1) brightness(.98) blur(0px)", duration: 1.1, ease: "power2.out" }, 4.5);
+    tl.to(portrait, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, 4.6);
 
     // the portal — a soft bloom rather than a hard cut
-    tl.to(flash, { opacity: 1, duration: 0.9, ease: "power2.in" }, 2.85);
-    tl.to(flash, { opacity: 0, duration: 1.0, ease: "power2.out" }, 3.7);
+    tl.to(flash, { opacity: 1, duration: 0.9, ease: "power2.in" }, 5.5);
+    tl.to(flash, { opacity: 0, duration: 1.0, ease: "power2.out" }, 6.4);
   }
 
   /* ===========================================================

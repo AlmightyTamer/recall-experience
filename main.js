@@ -15,7 +15,7 @@
   /* ---------------- Smooth scroll ---------------- */
   var lenis = null;
   if (!reduce && typeof Lenis !== "undefined" && hasGSAP) {
-    lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true });
+    lenis = new Lenis({ lerp: 0.07, wheelMultiplier: 0.85, smoothWheel: true, syncTouch: true });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);
@@ -266,7 +266,7 @@
 
     var tl = gsap.timeline({
       scrollTrigger: {
-        trigger: ".intro", start: "top top", end: "bottom bottom", scrub: 0.7,
+        trigger: ".intro", start: "top top", end: "bottom bottom", scrub: 1.1,
         onUpdate: function (self) { if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 4.0); }
       }
     });

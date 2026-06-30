@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Team — Recall</title>
+  <meta name="description" content="Recall is led by two co-founders combining clinical empathy with production-grade AI engineering." />
+  <meta name="theme-color" content="#050506" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page">
+  <div class="world-bg" aria-hidden="true"></div>
+  <canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <a class="nav-brand" href="index.html">Recall</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="problem.html">Problem</a>
+      <a href="product.html">Product</a>
+      <a href="team.html" class="is-active">Team</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <span class="chapter-tag reveal">The team</span>
+      <h1 class="page-title reveal">Built by caregivers' children who <span class="accent">watched the system fail.</span></h1>
+      <p class="page-lead reveal">Recall is led by two co-founders combining clinical empathy with production-grade AI engineering — building the tool they wished their own families had.</p>
+
+      <div class="team-grid">
+        <div class="member reveal">
+          <div class="member-avatar">PT</div>
+          <div>
+            <div class="member-name">Param Tyagi</div>
+            <div class="member-role">Co-Founder &amp; CEO</div>
+            <p class="member-bio">Sets Recall's vision and product direction — translating the lived reality of family caregiving into an experience that protects dignity first.</p>
+          </div>
+        </div>
+        <div class="member reveal">
+          <div class="member-avatar alt">AV</div>
+          <div>
+            <div class="member-name">Advaith Vijayasankaran</div>
+            <div class="member-role">Co-Founder &amp; CTO</div>
+            <p class="member-bio">Leads Recall's engineering — the offline-first care graph, the ACSE engine, vision verification, and the on-device AI that makes it all private.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-tag reveal">Why we build</p>
+      <h2 class="section-title reveal">Prevention, not paperwork.</h2>
+      <p class="section-intro reveal">We watched families absorb a years-long emergency with no playbook and almost no tools built for the home. Recall is our answer: cognitive care that listens before crisis, extends the caregiver, and gives the patient back their voice.</p>
+      <div class="grid grid-3">
+        <div class="card reveal"><span class="k">Clinical empathy</span><h3>Dignity first.</h3><p>Every decision is measured against one question: does this protect the person's dignity?</p></div>
+        <div class="card reveal" style="--accent:#3fd9a0"><span class="k">Production AI</span><h3>Real, shipping engineering.</h3><p>On-device models, edge compute, and a real-time care graph — not a slide deck.</p></div>
+        <div class="card reveal" style="--accent:#a98bff"><span class="k">Early signal</span><h3>Catch decline sooner.</h3><p>We optimize for the moment before crisis, where intervention still changes the outcome.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="contact-card reveal">
+        <h2 class="section-title" style="margin:0 auto;max-width:20ch">Let's build dignified care together.</h2>
+        <p class="section-intro" style="margin:18px auto 8px">Partnerships, pilots, and press — reach out anytime.</p>
+        <a class="email-link" href="mailto:paramtyagi101@gmail.com">paramtyagi101@gmail.com</a>
+        <div style="margin-top:22px"><a class="btn btn--primary" href="contact.html">Get in touch</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Recall</div>
+        <p>AI-native cognitive care for families who need early signal — Clara for patients, Recall AI for caregivers, and the ACSE engine that catches decline before crisis.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="problem.html">The problem</a>
+        <a href="product.html">The product</a>
+        <a href="team.html">Team</a>
+        <a href="https://almightytamer.github.io/recall/" target="_blank" rel="noopener">Live app</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:paramtyagi101@gmail.com">paramtyagi101@gmail.com</a>
+        <a href="contact.html">Get in touch</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Recall © 2026</span>
+      <span>Built by Param Tyagi &amp; Advaith Vijayasankaran</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="pages.js"></script>
+</body>
+</html>

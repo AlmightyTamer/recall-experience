@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Problem — Recall</title>
+  <meta name="description" content="Dementia is a years-long coordination problem families absorb alone. The infrastructure meant to help largely doesn't exist at home." />
+  <meta name="theme-color" content="#050506" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page">
+  <div class="world-bg" aria-hidden="true"></div>
+  <canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <a class="nav-brand" href="index.html">Recall</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="problem.html" class="is-active">Problem</a>
+      <a href="product.html">Product</a>
+      <a href="team.html">Team</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <span class="chapter-tag reveal">Chapter 1 · The problem</span>
+      <h1 class="page-title reveal">Every 65 seconds, someone develops <span class="accent">Alzheimer's.</span></h1>
+      <p class="page-lead reveal">When the system fails, families absorb the shock alone. Dementia isn't only a medical diagnosis — it's a years-long coordination problem spanning medications, cognition, safety, identity, and grief. The infrastructure meant to help largely doesn't exist at home.</p>
+    </section>
+
+    <section class="section">
+      <p class="section-tag reveal">By the numbers</p>
+      <h2 class="section-title reveal">A crisis hiding in plain sight.</h2>
+      <div class="stat-grid">
+        <div class="stat reveal"><div class="stat-num">65s</div><div class="stat-label">Someone develops Alzheimer's in the U.S. every 65 seconds.</div></div>
+        <div class="stat reveal"><div class="stat-num">19B</div><div class="stat-label">Hours of unpaid family care given every year.</div></div>
+        <div class="stat reveal"><div class="stat-num">$384B</div><div class="stat-label">Projected dementia health costs in 2025.</div></div>
+        <div class="stat reveal"><div class="stat-num">2×</div><div class="stat-label">Caregiver strain versus non-dementia care.</div></div>
+        <div class="stat reveal"><div class="stat-num">861K</div><div class="stat-label">New direct-care workers needed by 2032.</div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-tag reveal">Where care breaks down</p>
+      <h2 class="section-title reveal">Families absorb five problems at once.</h2>
+      <p class="section-intro reveal">Each one is a full-time job. Together, they're a years-long emergency with no playbook — and almost no tools built for the home.</p>
+      <div class="grid grid-3">
+        <div class="card reveal"><span class="k">Medications</span><h3>Missed &amp; doubled doses.</h3><p>A daily, high-stakes guessing game with no reliable second set of eyes.</p></div>
+        <div class="card reveal" style="--accent:#ff6aa2"><span class="k">Cognition</span><h3>Invisible decline.</h3><p>The slide happens between appointments, where no one is measuring.</p></div>
+        <div class="card reveal" style="--accent:#ffc64b"><span class="k">Safety</span><h3>Wandering &amp; sundowning.</h3><p>Crises arrive without warning — usually when no caregiver is in the room.</p></div>
+        <div class="card reveal" style="--accent:#3fd9a0"><span class="k">Identity</span><h3>"Who are you?"</h3><p>Losing names and faces erodes dignity faster than any single symptom.</p></div>
+        <div class="card reveal" style="--accent:#a98bff"><span class="k">Grief</span><h3>Caring while mourning.</h3><p>Families grieve a living person, alone, for years — and burn out.</p></div>
+        <div class="card reveal" style="--accent:#ff7a5c"><span class="k">The gap</span><h3>No home infrastructure.</h3><p>The support meant to help mostly doesn't exist where care actually happens.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="contact-card reveal">
+        <h2 class="section-title" style="margin:0 auto;max-width:18ch">Recall closes the gap before crisis.</h2>
+        <p class="section-intro" style="margin:18px auto 26px">See how Clara, Recall AI, and the ACSE engine turn the weight of the problem into the lift of a product.</p>
+        <a class="btn btn--primary" href="product.html">See the product</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Recall</div>
+        <p>AI-native cognitive care for families who need early signal — Clara for patients, Recall AI for caregivers, and the ACSE engine that catches decline before crisis.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="problem.html">The problem</a>
+        <a href="product.html">The product</a>
+        <a href="team.html">Team</a>
+        <a href="https://almightytamer.github.io/recall/" target="_blank" rel="noopener">Live app</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:paramtyagi101@gmail.com">paramtyagi101@gmail.com</a>
+        <a href="contact.html">Get in touch</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Recall © 2026</span>
+      <span>Built by Param Tyagi &amp; Advaith Vijayasankaran</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="pages.js"></script>
+</body>
+</html>

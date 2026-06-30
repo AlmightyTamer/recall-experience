@@ -15,7 +15,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="preload" as="image" href="assets/grandmother.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -47,32 +46,23 @@
     <!-- ======================= ACT I — THE GREY ======================= -->
     <section class="intro" aria-label="Introduction">
       <div class="intro-stage">
-        <!-- The wordmark (solid white, left-aligned) -->
+        <div class="intro-bg" aria-hidden="true">
+          <div class="intro-glow"></div>
+          <div class="intro-beam"></div>
+          <div class="intro-vignette"></div>
+        </div>
+
         <div class="wordmark-wrap" data-layer="wordmark">
+          <p class="wordmark-eyebrow" data-intro="eyebrow">Cognitive care companion</p>
           <h1 class="wordmark" data-intro="wordmark">Recall</h1>
           <p class="wordmark-sub" data-intro="sub"><span class="rule"></span>When the world goes quiet, a name remains.</p>
         </div>
 
-        <!-- Half-blend: white smoke mass on the right -->
         <div class="haze" aria-hidden="true"></div>
-        <!-- White ink smoke (tendrils) -->
-        <canvas id="smoke" class="smoke-canvas" aria-hidden="true"></canvas>
-
-        <!-- The grandmother -->
-        <div class="portrait-wrap" data-layer="portrait">
-          <img class="portrait" src="assets/grandmother.png"
-               alt="An elderly woman with deep laugh-lines and warm, knowing eyes, lit softly against the dark." />
-          <img class="iris" src="assets/iris.png" alt="" aria-hidden="true" />
+        <div class="smoke-wrap" aria-hidden="true">
+          <canvas id="smoke" class="smoke-canvas"></canvas>
         </div>
 
-        <p class="portrait-line" data-layer="portrait-line">
-          Margaret is eighty-one.<br /><span>Some mornings, she forgets her own.</span>
-        </p>
-
-        <!-- Portal flash -->
-        <div class="flash" data-layer="flash" aria-hidden="true"></div>
-
-        <!-- Scroll cue -->
         <a class="scroll-cue" href="#story" data-intro="cue" aria-label="Scroll down">
           <span>Scroll</span>
           <span class="scroll-cue__ring"><i class="ic ic-arrow-down"></i></span>
@@ -94,30 +84,6 @@
             A companion that holds the thread of a life — so the people we love
             can stay themselves, even when memory lets go.
           </p>
-
-          <!-- Phone mockup: grey → color (dark studio theme) -->
-          <div class="phone reveal" data-grey="true">
-            <div class="phone-screen">
-              <div class="app-ui">
-                <div class="app-status"><span>9:41</span><span class="app-dot"></span></div>
-                <p class="app-hello">Good morning, Margaret.</p>
-                <div class="app-card app-card--state">
-                  <span class="app-card__k">Today</span>
-                  <p>It's Sunday. You're home. Your daughter Anna is coming at noon, and the lilacs you planted are blooming.</p>
-                </div>
-                <div class="app-row">
-                  <div class="app-pill"><i class="ic ic-mic"></i>Clara</div>
-                  <div class="app-pill"><i class="ic ic-pill"></i>Meds</div>
-                  <div class="app-pill"><i class="ic ic-heart"></i>Calm</div>
-                </div>
-                <div class="app-card app-card--score">
-                  <span class="app-card__k">Steadiness</span>
-                  <div class="app-meter"><i style="--v:78%"></i></div>
-                  <span class="app-score">78</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -41,6 +41,7 @@
     var canvas = document.getElementById("smoke");
     if (!canvas || !hasTHREE || reduce) return;
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
     var scene = new THREE.Scene();
     var cam = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
@@ -70,8 +71,8 @@
         var op = (isReal ? 0.5 : 0.32) + Math.random() * 0.25;
         var mat = smokeMat(tex, op);
         var m = new THREE.Mesh(geo, mat);
-        // bias the smoke to the right so the left stays black (half-blend)
-        m.position.set(Math.random() * 22 - 4, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 8);
+        // keep smoke on the right so the wordmark stays clear on the left
+        m.position.set(6 + Math.random() * 18, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 8);
         m.rotation.z = Math.random() * 6.28;
         m.userData = {
           seed: Math.random() * 6.28,
@@ -229,6 +230,7 @@
      =========================================================== */
   function playEntrance() {
     if (reduce || !hasGSAP) { if (smoke) smoke.opacity = 1; return; }
+    var eyebrow = document.querySelector(".wordmark-eyebrow");
     var wm = document.querySelector(".wordmark");
     var sub = document.querySelector(".wordmark-sub");
     var rule = document.querySelector(".wordmark-sub .rule");
@@ -236,7 +238,8 @@
     var social = gsap.utils.toArray(".social li");
     var cue = document.querySelector(".scroll-cue");
 
-    gsap.set(wm, { opacity: 0, scale: 0.9, filter: "blur(16px)" });
+    if (eyebrow) gsap.set(eyebrow, { opacity: 0, y: 10 });
+    gsap.set(wm, { opacity: 0, scale: 0.92, filter: "blur(20px)" });
     gsap.set(sub, { opacity: 0 });
     if (rule) gsap.set(rule, { width: 0 });
     gsap.set(navEls, { opacity: 0, y: -16 });
@@ -244,56 +247,39 @@
     gsap.set(cue, { opacity: 0, y: 12 });
 
     var tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-    if (smoke) tl.to(smoke, { opacity: 1, duration: 2.0, ease: "power2.out" }, 0);
-    tl.to(wm, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power3.out" }, 0.15)
-      .to(rule, { width: 54, duration: 0.9 }, 0.9)
-      .to(sub, { opacity: 1, duration: 1.0 }, 1.0)
-      .to(navEls, { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 0.5)
-      .to(social, { opacity: 1, x: 0, duration: 0.7, stagger: 0.08 }, 1.1)
-      .to(cue, { opacity: 1, y: 0, duration: 0.8 }, 1.3);
+    if (smoke) tl.to(smoke, { opacity: 1, duration: 2.2, ease: "power2.out" }, 0);
+    if (eyebrow) tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.9 }, 0.2);
+    tl.to(wm, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.8, ease: "power3.out" }, 0.25)
+      .to(rule, { width: 54, duration: 1.0 }, 1.0)
+      .to(sub, { opacity: 1, duration: 1.0 }, 1.05)
+      .to(navEls, { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 0.55)
+      .to(social, { opacity: 1, x: 0, duration: 0.7, stagger: 0.08 }, 1.15)
+      .to(cue, { opacity: 1, y: 0, duration: 0.8 }, 1.35);
   }
 
   /* ===========================================================
-     INTRO SCRUB — grey, portrait, smoother eye, portal
+     INTRO SCRUB — hero dissolves straight into the butterfly world
      =========================================================== */
   function buildIntro() {
     var q = function (s) { return document.querySelector(s); };
-    var wordmark = q(".wordmark-wrap"), portraitWrap = q(".portrait-wrap"),
-        portrait = q(".portrait"), iris = q(".iris"), line = q(".portrait-line"),
-        flash = q(".flash"), haze = q(".haze");
-
-    gsap.set(iris, { filter: "grayscale(1) brightness(.92) blur(9px)" });
+    var wordmark = q(".wordmark-wrap"), haze = q(".haze"),
+        beam = q(".intro-beam"), glow = q(".intro-glow"), cue = q(".scroll-cue");
 
     var tl = gsap.timeline({
       scrollTrigger: {
-        trigger: ".intro", start: "top top", end: "bottom bottom", scrub: 1.1,
-        onUpdate: function (self) { if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 4.0); }
+        trigger: ".intro", start: "top top", end: "bottom top", scrub: 0.9,
+        onUpdate: function (self) {
+          if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 2.8);
+          if (fx) fx.opacity = Math.min(1, Math.max(0, (self.progress - 0.35) / 0.45));
+        }
       }
     });
-    // total ~7.3s of timeline; scrub maps scroll 0..1 onto it
-    // [0.00-0.18] wordmark   [0.20-0.42] full Margaret, held   [0.42-0.75] dive   [0.75-1.0] portal
 
-    // wordmark + white mass drift away
-    tl.to(wordmark, { scale: 1.14, filter: "blur(3px)", opacity: 0, duration: 1.0, ease: "power2.in" }, 0.1);
-    if (haze) tl.to(haze, { opacity: 0, duration: 1.0, ease: "power1.in" }, 0.1);
-
-    // ---- Margaret, shown FULLY, then held clearly ----
-    tl.fromTo(portraitWrap, { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 0.5);
-    tl.fromTo(line, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 1.7);
-    tl.to(line, { opacity: 0, y: -18, duration: 0.6, ease: "power2.in" }, 2.8);
-    // (full portrait visibly held here, ~progress 0.22 → 0.42)
-
-    // ---- the smooth dive into her eye (scale the whole frame about 68%/42%) ----
-    tl.to(portraitWrap, { scale: 13, ease: "power2.inOut", duration: 2.6 }, 3.2);
-    tl.to(portrait, { filter: "grayscale(1) brightness(.86) blur(7px)", duration: 1.0, ease: "power1.in" }, 4.3);
-    // iris rises through and sharpens as it takes focus (big overlap = seamless)
-    tl.to(iris, { opacity: 1, duration: 1.2, ease: "power2.inOut" }, 4.1);
-    tl.to(iris, { filter: "grayscale(1) brightness(.98) blur(0px)", duration: 1.1, ease: "power2.out" }, 4.5);
-    tl.to(portrait, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, 4.6);
-
-    // the portal — a soft bloom rather than a hard cut
-    tl.to(flash, { opacity: 1, duration: 0.9, ease: "power2.in" }, 5.5);
-    tl.to(flash, { opacity: 0, duration: 1.0, ease: "power2.out" }, 6.4);
+    tl.to(wordmark, { y: -72, scale: 1.04, filter: "blur(6px)", opacity: 0, ease: "power2.in", duration: 1 }, 0);
+    if (haze) tl.to(haze, { opacity: 0, duration: 0.85, ease: "power1.in" }, 0);
+    if (beam) tl.to(beam, { opacity: 0, duration: 0.85 }, 0);
+    if (glow) tl.to(glow, { opacity: 0.4, duration: 0.85 }, 0);
+    if (cue) tl.to(cue, { opacity: 0, y: 20, duration: 0.5, ease: "power2.in" }, 0);
   }
 
   /* ===========================================================
@@ -302,16 +288,10 @@
   function buildReveals() {
     if (!hasGSAP || !window.ScrollTrigger) return;
 
-    ScrollTrigger.create({
-      trigger: ".unveil", start: "top 80%",
-      onEnter: function () { if (fx) gsap.to(fx, { opacity: 1, duration: 2.6, ease: "power2.out" }); }
-    });
-
-    var phone = document.querySelector(".phone");
-    if (phone) {
+    if (!reduce && fx) {
       ScrollTrigger.create({
-        trigger: phone, start: "top 78%", once: true,
-        onEnter: function () { gsap.to(phone, { filter: "grayscale(0) brightness(1)", duration: 1.8, ease: "power2.inOut" }); }
+        trigger: ".color-world", start: "top 85%", once: true,
+        onEnter: function () { gsap.to(fx, { opacity: 1, duration: 2.0, ease: "power2.out" }); }
       });
     }
 

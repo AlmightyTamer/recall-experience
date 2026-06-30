@@ -13,41 +13,54 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="preload" as="image" href="assets/grandmother.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Skip the cinematic intro -->
-  <button id="skip-intro" class="skip-intro" aria-label="Skip the intro and go straight to the content">Skip intro</button>
-
-  <!-- Fixed atmosphere: the color world's sky (revealed after the intro) -->
+  <!-- Fixed studio-black atmosphere (the constant backdrop) -->
   <div class="world-bg" aria-hidden="true"></div>
-  <!-- Fixed 3D layer: butterflies float between the sky and the content -->
+  <!-- Fixed 3D layer: butterflies float in front of the studio black -->
   <canvas id="fx" class="fx-canvas" aria-hidden="true"></canvas>
 
-  <main>
+  <!-- Top nav -->
+  <header class="nav" data-intro="nav">
+    <a class="nav-brand" href="#top" aria-label="Recall home">Recall</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#top" class="is-active">Home</a>
+      <a href="#features">Features</a>
+      <a href="#story">Story</a>
+    </nav>
+  </header>
+
+  <!-- Social rail -->
+  <ul class="social" data-intro="social" aria-label="Social links">
+    <li><a href="#" aria-label="Instagram"><i class="ic ic-instagram"></i></a></li>
+    <li><a href="#" aria-label="LinkedIn"><i class="ic ic-linkedin"></i></a></li>
+    <li><a href="#" aria-label="Facebook"><i class="ic ic-facebook"></i></a></li>
+  </ul>
+
+  <main id="top">
     <!-- ======================= ACT I — THE GREY ======================= -->
     <section class="intro" aria-label="Introduction">
       <div class="intro-stage">
-        <!-- Procedural smoke around the wordmark -->
+        <!-- White ink smoke -->
         <canvas id="smoke" class="smoke-canvas" aria-hidden="true"></canvas>
 
         <!-- The wordmark -->
         <div class="wordmark-wrap" data-layer="wordmark">
-          <h1 class="wordmark">Recall</h1>
-          <p class="wordmark-sub">When the world goes quiet, a name remains.</p>
+          <h1 class="wordmark" data-intro="wordmark">Recall</h1>
+          <p class="wordmark-sub" data-intro="sub"><span class="rule"></span>When the world goes quiet, a name remains.</p>
         </div>
 
         <!-- The grandmother -->
-        <div class="portrait-wrap" data-layer="portrait" aria-hidden="false">
+        <div class="portrait-wrap" data-layer="portrait">
           <img class="portrait" src="assets/grandmother.png"
                alt="An elderly woman with deep laugh-lines and warm, knowing eyes, lit softly against the dark." />
           <img class="iris" src="assets/iris.png" alt="" aria-hidden="true" />
         </div>
 
-        <!-- The line that lands on her face -->
         <p class="portrait-line" data-layer="portrait-line">
           Margaret is eighty-one.<br /><span>Some mornings, she forgets her own.</span>
         </p>
@@ -55,20 +68,19 @@
         <!-- Portal flash -->
         <div class="flash" data-layer="flash" aria-hidden="true"></div>
 
-        <!-- Scroll hint -->
-        <div class="scroll-hint" data-layer="hint" aria-hidden="true">
-          <span>scroll</span>
-          <i></i>
-        </div>
+        <!-- Scroll cue -->
+        <a class="scroll-cue" href="#story" data-intro="cue" aria-label="Scroll down">
+          <span>Scroll</span>
+          <span class="scroll-cue__ring"><i class="ic ic-arrow-down"></i></span>
+        </a>
       </div>
     </section>
 
     <!-- ======================= ACT II — THE COLOR ======================= -->
-    <div class="color-world">
+    <div class="color-world" id="story">
 
       <!-- Unveil -->
       <section class="unveil" aria-label="Recall, revealed">
-        <div class="bloom-field" aria-hidden="true"></div>
         <div class="unveil-inner">
           <p class="eyebrow reveal">Then something remembers for her.</p>
           <h2 class="unveil-title reveal">
@@ -79,7 +91,7 @@
             can stay themselves, even when memory lets go.
           </p>
 
-          <!-- Phone mockup: grey → color -->
+          <!-- Phone mockup: grey → color (dark studio theme) -->
           <div class="phone reveal" data-grey="true">
             <div class="phone-screen">
               <div class="app-ui">
@@ -106,9 +118,9 @@
       </section>
 
       <!-- ======================= ACT III — WHAT IT DOES ======================= -->
-      <section class="features" aria-label="What Recall does">
+      <section class="features" id="features" aria-label="What Recall does">
 
-        <article class="feature" data-accent="#2b8fff">
+        <article class="feature" data-accent="#39a0ff">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-sun"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">State reconstruction</p>
@@ -117,7 +129,7 @@
           </div>
         </article>
 
-        <article class="feature" data-accent="#ff5d8f">
+        <article class="feature" data-accent="#ff6aa2">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-mic"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Clara, the voice companion</p>
@@ -126,7 +138,7 @@
           </div>
         </article>
 
-        <article class="feature" data-accent="#2f9e6f">
+        <article class="feature" data-accent="#3fd9a0">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-pill"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Vision-verified medication</p>
@@ -135,7 +147,7 @@
           </div>
         </article>
 
-        <article class="feature" data-accent="#f4b740">
+        <article class="feature" data-accent="#ffc64b">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-heart"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">ACSE score &amp; Comfort Mode</p>
@@ -144,7 +156,7 @@
           </div>
         </article>
 
-        <article class="feature" data-accent="#e2574c">
+        <article class="feature" data-accent="#ff7a5c">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-pulse"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">Apple Health vitals</p>
@@ -153,7 +165,7 @@
           </div>
         </article>
 
-        <article class="feature" data-accent="#7c6cff">
+        <article class="feature" data-accent="#a98bff">
           <div class="feature-media"><span class="feature-glyph"><i class="ic ic-lock"></i></span></div>
           <div class="feature-text">
             <p class="feature-kicker">All on the device</p>

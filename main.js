@@ -1,6 +1,6 @@
 /* ============================================================
-   RECALL — main.js
-   Lenis + GSAP ScrollTrigger choreography, Three.js smoke & butterflies
+   RECALL — main.js  (studio-black edition)
+   Lenis + GSAP ScrollTrigger, Three.js ink-smoke & butterflies
    ============================================================ */
 (function () {
   "use strict";
@@ -12,7 +12,7 @@
 
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
-  /* ---------------- Smooth scroll (Lenis) ---------------- */
+  /* ---------------- Smooth scroll ---------------- */
   var lenis = null;
   if (!reduce && typeof Lenis !== "undefined" && hasGSAP) {
     lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9, smoothWheel: true });
@@ -23,17 +23,16 @@
   }
 
   /* ===========================================================
-     SMOKE — soft drifting haze around the wordmark
+     SMOKE — layered textured planes, additive (black drops out)
      =========================================================== */
   function softSprite() {
-    var c = document.createElement("canvas");
-    c.width = c.height = 128;
+    var c = document.createElement("canvas"); c.width = c.height = 256;
     var g = c.getContext("2d");
-    var rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-    rg.addColorStop(0, "rgba(214,219,228,0.55)");
-    rg.addColorStop(0.4, "rgba(190,196,206,0.22)");
+    var rg = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    rg.addColorStop(0, "rgba(255,255,255,0.8)");
+    rg.addColorStop(0.35, "rgba(220,224,232,0.28)");
     rg.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = rg; g.fillRect(0, 0, 128, 128);
+    g.fillStyle = rg; g.fillRect(0, 0, 256, 256);
     var t = new THREE.Texture(c); t.needsUpdate = true; return t;
   }
 
@@ -45,34 +44,54 @@
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
     var scene = new THREE.Scene();
     var cam = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
-    cam.position.z = 14;
+    cam.position.z = 16;
 
-    var N = isMobile ? 300 : 560;
-    var geo = new THREE.BufferGeometry();
-    var pos = new Float32Array(N * 3);
-    var seed = new Float32Array(N);
-    var scl = new Float32Array(N);
-    for (var i = 0; i < N; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 26;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 18;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-      seed[i] = Math.random() * 6.28;
-      scl[i] = 2.2 + Math.random() * 5.5;
+    var N = isMobile ? 7 : 13;
+    var planes = [];
+    var fallbackTex = softSprite();
+
+    function smokeMat(tex, op) {
+      return new THREE.ShaderMaterial({
+        uniforms: { map: { value: tex }, opacity: { value: op } },
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+        vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ",
+        fragmentShader:
+          "uniform sampler2D map; uniform float opacity; varying vec2 vUv;" +
+          "void main(){ vec4 c=texture2D(map,vUv);" +
+          "float d=distance(vUv,vec2(0.5));" +              // radial edge fade
+          "float fall=smoothstep(0.5,0.12,d);" +
+          "gl_FragColor=vec4(c.rgb*fall*opacity,1.0);} "    // additive: alpha unused
+      });
     }
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-
-    var mat = new THREE.PointsMaterial({
-      size: 8.5, map: softSprite(), transparent: true, opacity: 0.34,
-      depthWrite: false, blending: THREE.AdditiveBlending, color: new THREE.Color(0x565b63),
-      sizeAttenuation: true
-    });
-    var pts = new THREE.Points(geo, mat);
-    scene.add(pts);
+    function buildPlanes(tex, isReal) {
+      for (var i = 0; i < N; i++) {
+        var size = (isReal ? 17 : 11) + Math.random() * (isReal ? 18 : 10);
+        var geo = new THREE.PlaneGeometry(size, size);
+        var op = (isReal ? 0.5 : 0.32) + Math.random() * 0.25;
+        var mat = smokeMat(tex, op);
+        var m = new THREE.Mesh(geo, mat);
+        m.position.set((Math.random() - 0.5) * 26, (Math.random() - 0.5) * 20, (Math.random() - 0.5) * 8);
+        m.rotation.z = Math.random() * 6.28;
+        m.userData = {
+          seed: Math.random() * 6.28,
+          spin: (Math.random() - 0.5) * 0.03,
+          riseV: 0.006 + Math.random() * 0.01,
+          baseOp: op
+        };
+        scene.add(m); planes.push(m);
+      }
+    }
+    // try the real ink-smoke texture; fall back to the soft sprite
+    new THREE.TextureLoader().load(
+      "assets/smoke.png",
+      function (tex) { tex.minFilter = THREE.LinearFilter; buildPlanes(tex, true); },
+      undefined,
+      function () { buildPlanes(fallbackTex, false); }
+    );
 
     var mouse = { x: 0, y: 0 };
     addEventListener("pointermove", function (e) {
-      mouse.x = (e.clientX / innerWidth - 0.5);
-      mouse.y = (e.clientY / innerHeight - 0.5);
+      mouse.x = e.clientX / innerWidth - 0.5; mouse.y = e.clientY / innerHeight - 0.5;
     }, { passive: true });
 
     function resize() {
@@ -81,43 +100,49 @@
     }
     resize(); addEventListener("resize", resize);
 
-    smoke = { renderer: renderer, mat: mat, group: pts, opacity: 1 };
+    smoke = { opacity: 0, intro: 1 };  // opacity = entrance fade, intro = scroll fade
     var t0 = performance.now();
     (function loop(now) {
       requestAnimationFrame(loop);
-      if (smoke.opacity <= 0.01) { renderer.clear(); return; }
+      var vis = smoke.opacity * smoke.intro;
+      if (vis <= 0.01) { renderer.clear(); return; }
       var t = (now - t0) / 1000;
-      var p = geo.attributes.position.array;
-      for (var i = 0; i < N; i++) {
-        p[i * 3 + 1] += 0.004 + (scl[i] * 0.0008);
-        p[i * 3] += Math.sin(t * 0.3 + seed[i]) * 0.004;
-        if (p[i * 3 + 1] > 9) p[i * 3 + 1] = -9;
+      for (var i = 0; i < planes.length; i++) {
+        var m = planes[i], u = m.userData;
+        m.position.y += u.riseV;
+        m.position.x += Math.sin(t * 0.18 + u.seed) * 0.006;
+        if (m.position.y > 12) m.position.y = -12;
+        m.rotation.z += u.spin * 0.4;
+        m.material.uniforms.opacity.value = u.baseOp * vis;
       }
-      geo.attributes.position.needsUpdate = true;
-      pts.rotation.z = Math.sin(t * 0.05) * 0.08;
-      cam.position.x += (mouse.x * 1.6 - cam.position.x) * 0.03;
-      cam.position.y += (-mouse.y * 1.2 - cam.position.y) * 0.03;
+      cam.position.x += (mouse.x * 2.2 - cam.position.x) * 0.03;
+      cam.position.y += (-mouse.y * 1.6 - cam.position.y) * 0.03;
       cam.lookAt(0, 0, 0);
-      mat.opacity = 0.34 * smoke.opacity;
       renderer.render(scene, cam);
     })(t0);
   }
 
   /* ===========================================================
-     BUTTERFLIES — 3D swarm, flapping wings, depth parallax
+     BUTTERFLIES — 3D swarm, bigger, flapping, depth parallax
      =========================================================== */
   var fx = null;
+  function wingMaterial() {
+    return new THREE.ShaderMaterial({
+      uniforms: { map: { value: null } },
+      transparent: true, depthWrite: false, side: THREE.DoubleSide,
+      vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ",
+      fragmentShader:
+        "uniform sampler2D map; varying vec2 vUv; void main(){ vec4 c=texture2D(map,vUv);" +
+        "float a=max(c.r,max(c.g,c.b)); a=smoothstep(0.05,0.20,a);" +
+        "if(a<0.02) discard; gl_FragColor=vec4(c.rgb,a);} "
+    });
+  }
   function makeButterfly(tex, half) {
-    // two wings, hinged at the body (x = 0)
     function wing(side) {
       var g = new THREE.PlaneGeometry(1, 1, 1, 1);
-      // pivot at inner edge: shift geometry so x in [0,1] (right) or [-1,0] (left)
       g.translate(side * 0.5, 0, 0);
-      // UV: right wing -> right half of texture, left wing -> left half
       var uv = g.attributes.uv.array;
-      for (var i = 0; i < uv.length; i += 2) {
-        uv[i] = side > 0 ? 0.5 + uv[i] * 0.5 : uv[i] * 0.5;
-      }
+      for (var i = 0; i < uv.length; i += 2) uv[i] = side > 0 ? 0.5 + uv[i] * 0.5 : uv[i] * 0.5;
       g.attributes.uv.needsUpdate = true;
       var m = new THREE.Mesh(g, half.clone());
       m.material.uniforms = THREE.UniformsUtils.clone(half.uniforms);
@@ -131,19 +156,6 @@
     return grp;
   }
 
-  function wingMaterial() {
-    return new THREE.ShaderMaterial({
-      uniforms: { map: { value: null } },
-      transparent: true, depthWrite: false, side: THREE.DoubleSide,
-      vertexShader:
-        "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} ",
-      fragmentShader:
-        "uniform sampler2D map; varying vec2 vUv; void main(){ vec4 c=texture2D(map,vUv);" +
-        "float a=max(c.r,max(c.g,c.b)); a=smoothstep(0.06,0.22,a);" +
-        "if(a<0.02) discard; gl_FragColor=vec4(c.rgb,a);} "
-    });
-  }
-
   function initButterflies() {
     var canvas = document.getElementById("fx");
     if (!canvas || !hasTHREE || reduce) return;
@@ -155,46 +167,40 @@
 
     var loader = new THREE.TextureLoader();
     var srcs = ["assets/butterfly_monarch.png", "assets/butterfly_blue.png"];
-    var texes = [];
-    var half = wingMaterial();
-    var flock = [];
-    var N = isMobile ? 7 : 16;
+    var texes = [], half = wingMaterial(), flock = [];
+    var N = isMobile ? 8 : 17;
 
     function build() {
       if (!texes.length) return;
       for (var i = 0; i < N; i++) {
-        var tex = texes[i % texes.length];
-        var b = makeButterfly(tex, half);
-        var s = 1.4 + Math.random() * 2.6;
+        var b = makeButterfly(texes[i % texes.length], half);
+        var s = 2.8 + Math.random() * 4.0;            // BIGGER
         b.scale.set(s, s, s);
-        b.position.set((Math.random() - 0.5) * 46, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30 - 6);
+        b.position.set((Math.random() - 0.5) * 48, (Math.random() - 0.5) * 32, (Math.random() - 0.5) * 30 - 4);
         b.userData.seed = Math.random() * 6.28;
         b.userData.speed = 0.4 + Math.random() * 0.7;
-        b.userData.flap = 0.7 + Math.random() * 0.6;
+        b.userData.flap = 0.8 + Math.random() * 0.6;
         b.userData.baseX = b.position.x; b.userData.baseY = b.position.y;
         scene.add(b); flock.push(b);
       }
     }
     var loaded = 0;
     srcs.forEach(function (src) {
-      loader.load(src, function (t) {
-        t.minFilter = THREE.LinearFilter; texes.push(t);
-        if (++loaded === 1) build(); // build as soon as first texture is ready
-      }, undefined, function () { /* missing texture is fine */ });
+      loader.load(src, function (t) { t.minFilter = THREE.LinearFilter; texes.push(t); if (++loaded === 1) build(); },
+        undefined, function () {});
     });
 
     var mouse = { x: 0, y: 0 };
     addEventListener("pointermove", function (e) {
       mouse.x = e.clientX / innerWidth - 0.5; mouse.y = e.clientY / innerHeight - 0.5;
     }, { passive: true });
-
     function resize() {
       renderer.setSize(innerWidth, innerHeight, false);
       cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
     }
     resize(); addEventListener("resize", resize);
 
-    fx = { canvas: canvas, opacity: 0, scrollY: 0, renderer: renderer };
+    fx = { opacity: 0, scrollY: 0 };
     var t0 = performance.now();
     (function loop(now) {
       requestAnimationFrame(loop);
@@ -205,8 +211,8 @@
         var b = flock[i], u = b.userData;
         var flap = Math.sin(t * 6 * u.speed + u.seed) * u.flap;
         u.L.rotation.y = flap; u.R.rotation.y = -flap;
-        b.position.y = u.baseY + Math.sin(t * 0.5 * u.speed + u.seed) * 1.6 + fx.scrollY * (6 + (i % 4) * 4);
-        b.position.x = u.baseX + Math.cos(t * 0.32 * u.speed + u.seed) * 1.8;
+        b.position.y = u.baseY + Math.sin(t * 0.5 * u.speed + u.seed) * 1.8 + fx.scrollY * (6 + (i % 4) * 4);
+        b.position.x = u.baseX + Math.cos(t * 0.32 * u.speed + u.seed) * 2.0;
         b.rotation.z = Math.sin(t * 0.4 + u.seed) * 0.25;
         b.rotation.x = -0.35 + Math.sin(t * 0.3 + u.seed) * 0.12;
       }
@@ -218,100 +224,105 @@
   }
 
   /* ===========================================================
-     INTRO TIMELINE — the grey, the portrait, the eye, the portal
+     INTRO ENTRANCE — plays on every load
      =========================================================== */
-  function buildIntro() {
-    var q = function (s) { return document.querySelector(s); };
-    var wordmark = q(".wordmark-wrap");
-    var portraitWrap = q(".portrait-wrap");
-    var portrait = q(".portrait");
-    var iris = q(".iris");
-    var line = q(".portrait-line");
-    var flash = q(".flash");
-    var hint = q(".scroll-hint");
+  function playEntrance() {
+    if (reduce || !hasGSAP) { if (smoke) smoke.opacity = 1; return; }
+    var wm = document.querySelector(".wordmark");
+    var sub = document.querySelector(".wordmark-sub");
+    var rule = document.querySelector(".wordmark-sub .rule");
+    var navEls = gsap.utils.toArray(".nav-brand, .nav-links a");
+    var social = gsap.utils.toArray(".social li");
+    var cue = document.querySelector(".scroll-cue");
 
-    gsap.set(portrait, { transformOrigin: "62% 42%" });
-    gsap.set(iris, { transformOrigin: "62% 42%" });
+    gsap.set(wm, { opacity: 0, scale: 0.9, filter: "blur(16px)" });
+    gsap.set(sub, { opacity: 0 });
+    if (rule) gsap.set(rule, { width: 0 });
+    gsap.set(navEls, { opacity: 0, y: -16 });
+    gsap.set(social, { opacity: 0, x: -14 });
+    gsap.set(cue, { opacity: 0, y: 12 });
 
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".intro", start: "top top", end: "bottom bottom",
-        scrub: 0.6,
-        onUpdate: function (self) { if (smoke) smoke.opacity = Math.max(0, 1 - self.progress * 3.2); }
-      }
-    });
-
-    // wordmark presence -> drift away
-    tl.to(hint, { opacity: 0, duration: 0.4 }, 0.04);
-    tl.to(wordmark, { scale: 1.18, filter: "blur(2px)", opacity: 0, duration: 1.2, ease: "power2.in" }, 0.06);
-
-    // grandmother arrives
-    tl.fromTo(portraitWrap, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" }, 0.18);
-    tl.fromTo(line, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.8 }, 0.42);
-    tl.to(line, { opacity: 0, y: -20, duration: 0.6 }, 0.78);
-
-    // zoom into the eye
-    tl.to(portrait, { scale: 8.2, ease: "power1.in", duration: 2.4 }, 0.62);
-    tl.to(portraitWrap, { "--x": 0 }, 0.62); // keep wrap settled
-
-    // iris portal crossfade
-    tl.fromTo(iris, { opacity: 0, scale: 1.25, x: "11%", y: "-7%" },
-      { opacity: 1, scale: 3.6, duration: 1.6, ease: "power1.in" }, 1.35);
-    tl.to(portrait, { opacity: 0, duration: 0.6 }, 1.7);
-
-    // the flash — memory ignites
-    tl.to(flash, { opacity: 1, duration: 0.7, ease: "power2.in" }, 2.05);
-    tl.to(flash, { opacity: 0, duration: 0.9, ease: "power2.out" }, 2.75);
-  }
-
-  function staticIntro() {
-    // reduced-motion: everything is just visible & legible (handled in CSS)
+    var tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    if (smoke) tl.to(smoke, { opacity: 1, duration: 2.0, ease: "power2.out" }, 0);
+    tl.to(wm, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power3.out" }, 0.15)
+      .to(rule, { width: 54, duration: 0.9 }, 0.9)
+      .to(sub, { opacity: 1, duration: 1.0 }, 1.0)
+      .to(navEls, { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 0.5)
+      .to(social, { opacity: 1, x: 0, duration: 0.7, stagger: 0.08 }, 1.1)
+      .to(cue, { opacity: 1, y: 0, duration: 0.8 }, 1.3);
   }
 
   /* ===========================================================
-     COLOR WORLD — unveil, butterflies fade-in, reveals
+     INTRO SCRUB — grey, portrait, smoother eye, portal
+     =========================================================== */
+  function buildIntro() {
+    var q = function (s) { return document.querySelector(s); };
+    var wordmark = q(".wordmark-wrap"), portraitWrap = q(".portrait-wrap"),
+        portrait = q(".portrait"), iris = q(".iris"), line = q(".portrait-line"), flash = q(".flash");
+
+    gsap.set(portrait, { transformOrigin: "62% 42%" });
+    gsap.set(iris, { transformOrigin: "62% 42%", filter: "grayscale(1) brightness(.9) blur(10px)" });
+
+    var tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".intro", start: "top top", end: "bottom bottom", scrub: 0.7,
+        onUpdate: function (self) { if (smoke) smoke.intro = Math.max(0, 1 - self.progress * 3.0); }
+      }
+    });
+
+    // wordmark drifts away
+    tl.to(wordmark, { scale: 1.16, filter: "blur(3px)", opacity: 0, duration: 1.1, ease: "power2.in" }, 0.06);
+
+    // grandmother arrives
+    tl.fromTo(portraitWrap, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 0.16);
+    tl.fromTo(line, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.7 }, 0.42);
+    tl.to(line, { opacity: 0, y: -18, duration: 0.6 }, 0.84);
+
+    // ---- the smooth dive into the eye ----
+    // long eased zoom on the portrait
+    tl.to(portrait, { scale: 9, ease: "power2.inOut", duration: 2.9 }, 0.55);
+    // soften the portrait as we reach the eye (hides the hand-off)
+    tl.to(portrait, { filter: "grayscale(1) brightness(.84) blur(7px)", duration: 1.1, ease: "power1.in" }, 1.7);
+    // iris rises through, sharpening as it takes focus (big overlap = seamless)
+    tl.to(iris, { opacity: 1, duration: 1.3, ease: "power2.inOut" }, 1.55);
+    tl.fromTo(iris, { scale: 1.3 }, { scale: 4.2, ease: "power2.inOut", duration: 2.6 }, 1.55);
+    tl.to(iris, { filter: "grayscale(1) brightness(.95) blur(0px)", duration: 1.2, ease: "power2.out" }, 2.0);
+    tl.to(portrait, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, 2.0);
+
+    // the portal — a soft bloom rather than a hard cut
+    tl.to(flash, { opacity: 1, duration: 0.9, ease: "power2.in" }, 2.85);
+    tl.to(flash, { opacity: 0, duration: 1.0, ease: "power2.out" }, 3.7);
+  }
+
+  /* ===========================================================
+     COLOR WORLD reveals
      =========================================================== */
   function buildReveals() {
     if (!hasGSAP || !window.ScrollTrigger) return;
 
-    // bring the butterflies + flowers into the world at the unveil
     ScrollTrigger.create({
       trigger: ".unveil", start: "top 80%",
-      onEnter: function () {
-        gsap.to(".world-bg", { opacity: 1, duration: 1.6, ease: "power2.out" });
-        if (fx) gsap.to(fx, { opacity: 1, duration: 2.4, ease: "power2.out" });
-        gsap.to(".bloom-field", { opacity: 1, y: 0, scale: 1, duration: 1.8, ease: "power2.out" });
-      }
+      onEnter: function () { if (fx) gsap.to(fx, { opacity: 1, duration: 2.6, ease: "power2.out" }); }
     });
 
-    // phone: grey -> color
     var phone = document.querySelector(".phone");
     if (phone) {
       ScrollTrigger.create({
         trigger: phone, start: "top 78%", once: true,
-        onEnter: function () {
-          gsap.to(phone, { filter: "grayscale(0) brightness(1)", duration: 1.8, ease: "power2.inOut" });
-        }
+        onEnter: function () { gsap.to(phone, { filter: "grayscale(0) brightness(1)", duration: 1.8, ease: "power2.inOut" }); }
       });
     }
 
     if (reduce) return;
 
-    // generic reveals
     gsap.utils.toArray(".reveal").forEach(function (el) {
-      gsap.to(el, {
-        opacity: 1, y: 0, duration: 1, ease: "power3.out",
-        scrollTrigger: { trigger: el, start: "top 85%" }
-      });
+      gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
     });
 
-    // feature rows: slide + tint the accent
     gsap.utils.toArray(".feature").forEach(function (row) {
       var accent = row.getAttribute("data-accent");
       if (accent) row.style.setProperty("--accent", accent);
-      var media = row.querySelector(".feature-media");
-      var text = row.querySelector(".feature-text");
-      gsap.from([text, media], {
+      gsap.from([row.querySelector(".feature-text"), row.querySelector(".feature-media")], {
         opacity: 0, y: 46, duration: 1.05, ease: "power3.out", stagger: 0.12,
         scrollTrigger: { trigger: row, start: "top 78%" }
       });
@@ -321,31 +332,10 @@
       });
     });
 
-    // couple the butterfly parallax to scroll progress
     ScrollTrigger.create({
       trigger: ".color-world", start: "top bottom", end: "bottom top",
       onUpdate: function (self) { if (fx) fx.scrollY = (self.progress - 0.5) * 0.6; }
     });
-  }
-
-  /* ---------------- Skip intro ---------------- */
-  function initSkip() {
-    var btn = document.getElementById("skip-intro");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      var target = document.querySelector(".unveil");
-      if (!target) return;
-      if (lenis) lenis.scrollTo(target, { offset: -10, duration: 1.6 });
-      else target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
-    });
-    // fade the button away once we're past the intro
-    if (hasGSAP && window.ScrollTrigger) {
-      ScrollTrigger.create({
-        trigger: ".unveil", start: "top 60%",
-        onEnter: function () { btn.classList.add("gone"); },
-        onLeaveBack: function () { btn.classList.remove("gone"); }
-      });
-    }
   }
 
   /* ---------------- boot ---------------- */
@@ -354,7 +344,7 @@
     initButterflies();
     if (!reduce) buildIntro();
     buildReveals();
-    initSkip();
+    playEntrance();
     if (hasGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
   }
 

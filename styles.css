@@ -378,3 +378,95 @@ img{display:block;max-width:100%}
   .page-hero{padding-top:20vh}
 }
 @media (max-width:520px){ .footer-inner{grid-template-columns:1fr} }
+
+/* ============================================================
+   THE DESCENT — a phone falls cliff to cliff
+   ============================================================ */
+.descent{position:relative;z-index:1}
+
+/* parallax canyon backdrop (fixed, faded in while descent is active) */
+.canyon{position:fixed;inset:0;z-index:0;opacity:0;pointer-events:none}
+.canyon-sky{position:absolute;inset:0;background:linear-gradient(180deg,#0a0e16 0%,#070709 46%,#050506 100%)}
+.canyon-img{position:absolute;inset:-8% 0;background:url("assets/canyon.png") center/cover no-repeat;opacity:.42;will-change:transform}
+.canyon-fog{position:absolute;inset:0;width:100%;height:100%;opacity:.8}
+.canyon-vignette{position:absolute;inset:0;background:
+  radial-gradient(130% 100% at 50% 28%,transparent 38%,rgba(0,0,0,.55) 78%,rgba(0,0,0,.85) 100%)}
+
+/* the falling phone */
+.faller{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0}
+.faller .phone{
+  --w:clamp(158px,17vw,232px);
+  position:absolute;left:50%;top:9vh;width:var(--w);height:calc(var(--w)*2.04);
+  margin:0 0 0 calc(var(--w) / -2);
+  border-radius:34px;padding:10px;background:linear-gradient(160deg,#2a2c31,#0a0b0d);
+  filter:none;
+  box-shadow:0 40px 90px -24px rgba(0,0,0,.9),0 0 70px -6px rgba(57,140,255,.55),0 0 0 1px rgba(255,255,255,.1) inset;
+  will-change:transform;
+}
+.faller .phone-screen{border-radius:25px}
+.faller .app-ui{padding:18px 15px;gap:11px}
+.faller .app-hello{font-size:18px}
+.faller .app-card{padding:12px 13px;border-radius:14px}
+.faller .app-card--state p{font-size:12px}
+.faller .app-pill{padding:10px 5px;font-size:10px;border-radius:13px}
+.faller .app-score{font-size:26px}
+
+/* the cliffs */
+.cliffs{position:relative;z-index:2}
+.cliff{position:relative;min-height:94vh;display:flex;align-items:center;padding:0 clamp(22px,6vw,96px)}
+.cliff[data-side="left"]{justify-content:flex-end}    /* phone/rock left, text right */
+.cliff[data-side="right"]{justify-content:flex-start} /* phone/rock right, text left */
+.cliff[data-side="center"]{justify-content:center;text-align:center}
+.cliff--hero{min-height:100vh}
+.cliff--final{min-height:108vh}
+
+.cliff-text{max-width:min(440px,44vw);position:relative;z-index:4}
+.cliff[data-side="center"] .cliff-text{max-width:720px}
+.cliff-k{display:inline-block;font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--accent,#39a0ff);margin-bottom:14px}
+.cliff-text h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.025em;line-height:1.0;font-size:clamp(30px,4.6vw,62px);color:#fff}
+.cliff-text p{margin-top:16px;font-size:clamp(15px,1.7vw,19px);line-height:1.6;color:var(--txt-soft)}
+
+.cliff-wordmark{font-family:var(--font-display);font-weight:900;letter-spacing:-.045em;line-height:.86;
+  font-size:clamp(72px,13vw,180px);color:#fff}
+.cliff-tagline{margin-top:18px;font-size:clamp(17px,2.1vw,24px);line-height:1.45;color:var(--txt-soft)}
+.cliff-tagline span{color:#fff}
+.cliff-final-title{font-size:clamp(36px,6vw,86px);line-height:1.0}
+.cliff-final-title span{background:linear-gradient(110deg,var(--brand),var(--brand-2) 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.cliff--final .cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+
+/* in-flow scroll cue inside the hero cliff */
+.cliff .scroll-cue{position:static;transform:none;left:auto;bottom:auto;flex-direction:row;gap:14px;margin-top:40px;align-items:center;mix-blend-mode:normal;color:var(--txt-soft)}
+.cliff .scroll-cue span:first-child{font-size:11px;letter-spacing:.26em}
+.cliff .scroll-cue__ring{width:40px;height:40px;border-color:rgba(255,255,255,.4)}
+
+/* the rock ledges (CSS base; generated rock art layers on top when present) */
+.cliff-rock{position:absolute;bottom:4vh;z-index:1;width:min(50vw,560px);height:min(36vh,320px);
+  background:linear-gradient(176deg,#191c24 0%,#0c0e12 55%,#070709 100%);
+  clip-path:polygon(0% 40%,7% 30%,15% 37%,25% 21%,37% 33%,49% 18%,60% 31%,72% 22%,84% 35%,93% 27%,100% 38%,100% 100%,0% 100%);
+}
+.cliff-rock::before{content:"";position:absolute;inset:0;clip-path:inherit;
+  background:linear-gradient(180deg,rgba(125,160,255,.55),rgba(125,160,255,0) 14%)}
+.cliff-rock::after{content:"";position:absolute;inset:0;clip-path:inherit;
+  background:url("assets/cliff.png") center/cover no-repeat;opacity:0;mix-blend-mode:screen}
+.cliff[data-side="left"] .cliff-rock{left:-7vw}
+.cliff[data-side="right"] .cliff-rock{right:-7vw}
+.cliff-rock--wide{width:min(76vw,920px);height:min(30vh,260px);left:50%!important;right:auto!important;transform:translateX(-50%)}
+
+/* final section bg solid so it covers the canyon cleanly */
+.color-world{background:#050506}
+.cta{position:relative;z-index:2}
+
+@media (max-width:760px){
+  .faller .phone{--w:clamp(140px,40vw,180px);top:7vh}
+  .cliff-text{max-width:78vw}
+  .cliff[data-side="left"],.cliff[data-side="right"]{justify-content:center;text-align:center}
+  .cliff-rock{width:120vw;left:-10vw!important;right:auto!important;bottom:2vh;height:26vh}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .canyon{opacity:1;position:absolute;height:100%}
+  .canyon-fog{display:none}
+  .faller{position:absolute;opacity:1}
+  .faller .phone{position:relative;top:0;margin:0 auto}
+  .cliff{min-height:auto;padding-top:10vh;padding-bottom:10vh}
+}

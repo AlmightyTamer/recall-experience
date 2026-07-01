@@ -1,0 +1,16 @@
+---
+description: Toggle GitHub repo lockdown for gotham12 when Param uses the codewords recall-lock or recall-unlock
+globs:
+alwaysApply: true
+---
+
+# Repo guard codewords (Param only)
+
+When **Param** (repo owner AlmightyTamer) says:
+
+- **`recall-lock`** — run `./scripts/repo-guard.sh lock` from the repo root. This downgrades @gotham12 to write access and enables branch protection so only @AlmightyTamer can approve merges to `main`.
+- **`recall-unlock`** — run `./scripts/repo-guard.sh unlock`. This grants @gotham12 admin access and removes branch protection (full access).
+
+After running, report the output of `status` and confirm the new state.
+
+Do not run these for anyone other than Param / AlmightyTamer.
